@@ -1,7 +1,7 @@
 from __future__ import print_function
 import numpy as np
 import pandas as pd
-import json
+import json,os
 import requests
 import re,ast
 import time
@@ -139,8 +139,15 @@ def get_food_gene_relationship(data_list,domain):
     
     dflist=[]
     data_len = len(data_list)
+    sv_folder='gene_temp/'
+    if not os.path.exists(sv_folder):
+        os.makedirs(sv_folder)
     # loop on food items
     for k in range(data_len):
+        cur_sv_path  = sv_folder+str(k)+'.csv'
+        if os.path.exists(cur_sv_path):
+            print("Already done \t",cur_sv_path)
+            continue
         d1 = {}
         entrez_gene_id,gene_name,gene_symbol = [],[],[]
 
@@ -168,7 +175,9 @@ def get_food_gene_relationship(data_list,domain):
         d1["Entrez Gene ID"]=entrez_gene_id
         d1["Gene Name"]=gene_name
         d1["Gene Symbol"]=gene_symbol 
-        
+
+        temp_df = pd.DataFrame(d1)
+        temp_df.to_csv(cur_sv_path,index=False)
         dflist.append(d1)
         time.sleep(1)
         print(k)
@@ -178,8 +187,16 @@ def get_disease_gene_relationship(data_list,domain):
     
     dflist=[]
     data_len = len(data_list)
+
+    sv_folder='disease_gene_temp/'
+    if not os.path.exists(sv_folder):
+        os.makedirs(sv_folder)
     # loop on disease
     for k in range(data_len):
+        cur_sv_path  = sv_folder+str(k)+'.csv'
+        if os.path.exists(cur_sv_path):
+            print("Already done \t",cur_sv_path)
+            continue
         d1 = {}
         entrez_gene_id,gene_name,gene_symbol,source,via_chemical = [],[],[],[],[]
 
@@ -212,7 +229,8 @@ def get_disease_gene_relationship(data_list,domain):
         d1["Gene Symbol"]=gene_symbol 
         d1["Source"]=source
         d1["Via Chemicals"]=via_chemical 
-        
+        temp_df = pd.DataFrame(d1)
+        temp_df.to_csv(cur_sv_path,index=False)
         dflist.append(d1)
         time.sleep(1)
         print(k)
@@ -221,10 +239,18 @@ def get_disease_gene_relationship(data_list,domain):
 
 def get_disease_chemical_relationship(data_list,domain):
     
+    sv_folder='disease_chemical_temp/'
+    if not os.path.exists(sv_folder):
+        os.makedirs(sv_folder)
     dflist=[]
     data_len = len(data_list)
     # loop on disease
     for k in range(data_len):
+
+        cur_sv_path  = sv_folder+str(k)+'.csv'
+        if os.path.exists(cur_sv_path):
+            print("Already done \t",cur_sv_path)
+            continue
         d1 = {}
         pubchem_id,common_name,functional_group = [],[],[]
         via_genes,source,type = [],[],[]
@@ -260,7 +286,8 @@ def get_disease_chemical_relationship(data_list,domain):
         d1["Source"]=source
         d1["Via Genes"]=via_genes
         d1["Type"]=type 
-        
+        temp_df = pd.DataFrame(d1)
+        temp_df.to_csv(cur_sv_path,index=False)
         dflist.append(d1)
         time.sleep(1)
         print(k)
